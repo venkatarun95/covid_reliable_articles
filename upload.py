@@ -3,6 +3,7 @@ from download_sheet import download_sheet
 
 import os
 import pickle as pkl
+import requests
 from typing import List
 from typesense import Client
 
@@ -19,7 +20,7 @@ def upload_articles(values: List[List[str]], client: Client):
             'filter_by':
             'url: %s' % url,
             'per_page':
-            1,
+            0,
         })
         if resp['found'] > 0:
             continue
@@ -36,10 +37,28 @@ def upload_articles(values: List[List[str]], client: Client):
             row_doc[x] = dat[x]
         print(url)
 
-        client.collections['reliable_articles'].documents.create(row_doc)
+        try:
+            client.collections['reliable_articles'].documents.create(row_doc)
+        except requests.exceptions.ConnectionError as e:
+            print(e)
 
 
 if __name__ == "__main__":
+    import client_info
+    client = client_info.admin_client
+
+    # Export all data instead of uploading
+    if False:
+        s = client.collections['reliable_articles'].documents.search({
+            'q':
+            '*',
+            'per_page':
+            10,
+        })
+        # s = client.collections['reliable_articles'].documents.export()
+        print(s)
+        exit(0)
+
     if os.path.isfile('test_downloaded.pkl'):
         with open('test_downloaded.pkl', 'rb') as f:
             values = pkl.load(f)
@@ -47,18 +66,5 @@ if __name__ == "__main__":
         values = download_sheet()
         with open('test_downloaded.pkl', 'wb') as f:
             pkl.dump(values, f)
-
-    client = Client({
-        'nodes': [{
-            'host':
-            'localhost',  # For Typesense Cloud use xxx.a1.typesense.net
-            'port': '8108',  # For Typesense Cloud use 443
-            'protocol': 'http'  # For Typesense Cloud use https
-        }],
-        'api_key':
-        'xyz',
-        'connection_timeout_seconds':
-        2
-    })
 
     upload_articles(values, client)
