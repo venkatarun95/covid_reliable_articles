@@ -17,7 +17,8 @@ const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
   //  So you can pass any parameters supported by the search endpoint below.
   //  queryBy is required.
   additionalSearchParameters: {
-    queryBy: "title,google_title,text"
+      queryBy: "title,google_title,text",
+      queryByWeights: "5,5,1"
   }
 });
 const searchClient = typesenseInstantsearchAdapter.searchClient;
@@ -102,7 +103,7 @@ search.addWidgets([
   <div><b>
       ${instantsearch.snippet({ attribute: 'title', hit })}
     </b></div>
-<img src="${hit.top_image}" alt=" " class="img-fluid img-thumbnail"/>
+<img src="${hit.top_image}" onerror="this.style.display='none'" class="img-fluid img-thumbnail"/>
 </a>
 <div>${display_text}</div>
 <div>
