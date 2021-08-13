@@ -6,7 +6,7 @@ import pickle as pkl
 import requests
 from typing import List
 from typesense import Client
-
+import utils
 
 def upload_articles(values: List[List[str]], client: Client):
     for (i, row) in enumerate(values):
@@ -31,10 +31,14 @@ def upload_articles(values: List[List[str]], client: Client):
             'google_title': title,
             'description': description
         }
-
-        dat = augment_data(url)
-        for x in dat:
-            row_doc[x] = dat[x]
+        
+        if utils.url_classifier(url) == "pdf":
+            row_doc['title'] = row_doc['google_title']
+            row_doc['text'] = utils.get_pdf_text(url)
+        else:
+            dat = augment_data(url)
+            for x in dat:
+                row_doc[x] = dat[x]
         print(url)
 
         try:
