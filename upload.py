@@ -7,6 +7,9 @@ import requests
 from typing import List
 from typesense import Client
 import utils
+import tagger
+
+tagger.load_model()
 
 def upload_articles(values: List[List[str]], client: Client):
     for (i, row) in enumerate(values):
@@ -40,6 +43,8 @@ def upload_articles(values: List[List[str]], client: Client):
             for x in dat:
                 row_doc[x] = dat[x]
         print(url)
+        
+        row_doc['tech_tag'] = tagger.predict_tag(row_doc['text'])[0]
 
         try:
             client.collections['reliable_articles'].documents.create(row_doc)
