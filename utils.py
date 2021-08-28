@@ -7,7 +7,10 @@ def get_pdf_text(url):
     filename = Path('temp.pdf')
     response = requests.get(url)
     filename.write_bytes(response.content)
-    doc = fitz.open("temp.pdf") 
+    try:
+        doc = fitz.open("temp.pdf")
+    except:
+        return None
     text = ""
     for page in doc:
         text += page.get_text()
@@ -29,9 +32,12 @@ def url_classifier(url):
 
 def get_content_type(url):
     header = requests.head(url).headers
-    if "pdf" in header.get('content-type'):
+    ctype = header.get('content-type')
+    if ctype is None:
+        return False
+    if "pdf" in ctype:
         return "pdf"
-    elif "image" in header.get('content-type'):
+    elif "image" in ctype:
         return "image"
     else:
         return False

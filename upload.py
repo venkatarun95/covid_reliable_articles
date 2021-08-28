@@ -15,6 +15,7 @@ def upload_articles(values: List[List[str]], client: Client):
     for (i, row) in enumerate(values):
         title = row[0]
         url = row[1]
+        google_date = row[4]
         description = row[5]
 
         resp = client.collections['reliable_articles'].documents.search({
@@ -38,13 +39,19 @@ def upload_articles(values: List[List[str]], client: Client):
         if utils.url_classifier(url) == "pdf":
             row_doc['title'] = row_doc['google_title']
             row_doc['text'] = utils.get_pdf_text(url)
+            if row_doc['text'] is None:
+                continue
+            if google_date != '':
+                res['date'] = int(parser.parse(google_date).timestamp())
+            else:
+                row_doc['date'] = 0
         else:
-            dat = augment_data(url)
+            dat = augment_data(url, google_date)
             for x in dat:
                 row_doc[x] = dat[x]
         print(url)
         
-        row_doc['tech_tag'] = tagger.predict_tag(row_doc['text'])[0]
+        row_doc['tech_tag'] = str(tagger.predict_tag(row_doc['text'])[0])
 
         try:
             client.collections['reliable_articles'].documents.create(row_doc)

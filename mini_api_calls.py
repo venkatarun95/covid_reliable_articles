@@ -12,5 +12,8 @@ if __name__ == "__main__":
                 'per_page': 0,
             })
         print(resp['found'])
+    elif cmd == "delete":
+        resp = admin_client.collections['reliable_articles'].delete()
+        print(resp)
     else:
         print(f"Unrecognized command '{cmd}'")
