@@ -67,6 +67,13 @@ def create_schema(client: Client):
                 'type': 'bool',
                 'optional': True,
                 'facet': True
+            },
+            {
+                # A string describing the source
+                'name': 'source',
+                'type': 'string',
+                'optional': True,
+                'facet': True
             }
         ],
         'default_sorting_field':

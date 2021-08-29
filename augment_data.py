@@ -4,6 +4,7 @@ import json
 from newspaper import Article
 from typing import Dict
 from typesense import Client
+from urllib.parse import urlparse
 
 
 def augment_data(url: str, google_date) -> Dict[str, str]:
@@ -20,6 +21,7 @@ def augment_data(url: str, google_date) -> Dict[str, str]:
     res['text'] = article.text
     res['title'] = article.title
     res['top_image'] = article.top_image
+    res['source'] = url_to_source(url)
     if google_date == '':
         date = find_date(article.html)
         if date is None:
@@ -38,6 +40,45 @@ def augment_data(url: str, google_date) -> Dict[str, str]:
 
     return res
 
+
+def url_to_source(url):
+    ''' Return a descriptive string of where the URL is sourced from '''
+    sources = [
+    	["thelancet", "The Lancet"],
+    	["nejm", "New England Journal of medicine"],
+    	["jamanetwork", "JAMA"],
+    	["scientificamerican", "Scientific American"],
+    	["cdc.gov", "CDC USA"],
+    	["nature", "Nature"],
+    	["sciencemag", "Science"],
+    	["pfizer", "Pfizer"],
+    	["modernatx", "Moderna"],
+    	["yourlocalepidemiologist", "Your Local Epidemiologist"],
+    	["jnj", "JnJ"],
+    	["astrazeneca", "Astra Zeneca"],
+    	["bmj", "BMJ"],
+    	["echnologyreview", "Technology Review"],
+    	["globalhealth.stanford", "Stanford Univ."],
+    	["iisc", "Indian Institute of Science"],
+    	["caltech", "CalTech"],
+    	["hopkinsmedicine", "Hopkins Medicine"],
+    	["ucsf", "UC San Francisco"],
+    	["unbiasedscipod", "Unbiased Science Podcast"],
+    	["hoodmedicine", "Hood Medicine"],
+    	["princeton", "Princeton Univ."],
+    	["theconversation", "The Conversation"],
+    	["dearpandemic", "Dear Pandemic"],
+    	["firstdraft", "First Draft News"],
+    	["who.int", "WHO"],
+    	["nih.gov", "NIH USA"],
+    	["nationalgeographic", "National Geographic"]
+    ];
+    host = urlparse(url).hostname
+    for s in sources:
+        if host.find(s[0]):
+            return s[1]
+    return ""
+    
 
 if __name__ == "__main__":
     print(augment_data('https://www.thelancet.com/pdfs/journals/landia/PIIS2213-8587(21)00059-0.pdf', '')['date'])
