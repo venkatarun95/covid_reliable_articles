@@ -95,7 +95,7 @@ function renderHitItem(hit) {
 <div class="card" style="width: 18rem;">
   <a href=${hit.url}>
     <span class="position-absolute top-0 start-0 badge rounded-pill bg-secondary">${url_to_source(hit.url)}</span>
-    <img src="${hit.top_image}" class="card-img-top" alt="..." onerror="this.style.display='none'">
+    <img src="${hit.top_image}" class="card-img-top" alt="..." onerror="this.style.display='none'" onload="if (this.naturalWidth < 50 || this.naturalHeight < 50) { this.style.display='none'; }">
   </a>
   <div class="card-body">
     <a href=${hit.url}>
