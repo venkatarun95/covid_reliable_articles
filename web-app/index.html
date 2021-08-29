@@ -11,35 +11,59 @@
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css">
   <link rel="stylesheet" href="./src/index.css">
-  <link rel="stylesheet" href="./src/app.css">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+  <!--<link rel="stylesheet" href="./src/app.css">-->
+
+  <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>-->
+
+  <!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>-->
 
   <title>CoviDB</title>
 </head>
-
 <body>
-  <header class="header">
-    <h1 class="header-title">
-      <a href="/">CoviDB</a>
-    </h1>
-    <p class="header-subtitle">
-      Reliable information about COVID19
-    </p>
-  </header>
-
   <div class="container">
-    <div class="search-panel">
-      <div class="search-panel__results">
-        <div id="searchbox"></div>
-        <div id="hits"></div>
-      </div>
+    <div class="row">
+      <h1>Reliable COVID-19 Information</h1>
     </div>
+    <div class="row">
+      <div id="searchbox"></div>
+    </div>
+    <nav class="navbar navbar-light bg-light">
+      <div class="container-fluid">
+	<!-- <div class="form-check form-switch"> -->
+	<!--   <input class="form-check-input" type="checkbox" id="technical"> -->
+	<!--   <label class="form-check-label" for="flexSwitchCheckDefault">Include technical articles</label> -->
+	<!-- </div> -->
+	<div id="toggle_technical" class="form-check form-switch"></div>
+	<div class="d-flex">
+	  <a href="#" class="nav-link">Why this site?</a>
+	  <a href="#" class="nav-link">About Us</a>
+	</div>
+      </div>
+    </nav>
+    <div class="row" id="searchbox"></div>
+    <div class="row" id="hits">
+    </div>
+      <!-- <div class="search-panel">
+	<div class="search-panel__results">
+          <div id="searchbox"></div>
+          <div id="hits"></div>
+	</div>
+      </div> -->
 
-    <div id="pagination"></div>
+      <div id="pagination"></div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/algoliasearch/3.32.0/algoliasearchLite.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.25.2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
   <script src="./src/app.js"></script>
 </body>
 

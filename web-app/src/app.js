@@ -113,30 +113,59 @@ search.addWidgets([
 
                 `;
 	    }
-        //     item: `
-        //     <span><script>document.write("Hello")</script></span>
-        //   <div>
-        //     <img src="" align="left" alt="" />
-        //     <div class="hit-name"><b>
-        //       <a href={{ url }}>
-        //         {{#helpers.highlight}}{ "attribute": "title" }{{/helpers.highlight}}
-        //       </a>
-        //     </b></div>
-        //     <img height=75 width=225 src="{{#helpers.highlight}}{ "attribute": "top_image" }{{/helpers.highlight}}" />
-        //     <div class="hit-description">
-        //       {{#helpers.snippet}}{ "attribute": "text" }{{/helpers.snippet}}
-        //     </div>
-
-        //   <!--<div id="publisher{{id}}"></div>
-        //   <script>$('#publisher{{id}}').text("Hello")</script> -->
-
-        //   </div>
-        // `,
 	},
     }),
     instantsearch.widgets.pagination({
 	container: '#pagination',
     }),
 ]);
+
+const renderToggleRefinement = (renderOptions, isFirstRender) => {
+    const { value, refine, widgetParams } = renderOptions;
+
+    if (isFirstRender) {
+	const label = document.createElement('label');
+	const input = document.createElement('input');
+	input.type = 'checkbox';
+	input.setAttribute('class', 'form-check-input');
+	input.setAttribute('id', 'toggle_technical_check');
+	const text = document.createElement('label');
+	text.setAttribute('class', 'form-check-label');
+	text.setAttribute('for', 'toggle_technical_check');
+	text.appendChild(document.createTextNode('Scholarly articles'));
+
+	const span = document.createElement('span');
+
+	input.addEventListener('change', event => {
+	    refine({ isRefined: !event.target.checked });
+	});
+
+	label.appendChild(input);
+	//label.appendChild(document.createTextNode('Include technical articles'));
+	label.appendChild(text);
+	text.appendChild(span);
+
+	console.log(widgetParams);
+	widgetParams.container.appendChild(label);
+    }
+
+    widgetParams.container.querySelector('input').checked = value.isRefined;
+    // widgetParams.container.querySelector('span').innerHTML =
+    // 	value.count !== null ? ` (${value.count})` : '';
+};
+
+const customToggleRefinement = instantsearch.connectors.connectToggleRefinement(
+  renderToggleRefinement
+);
+
+search.addWidgets([
+    customToggleRefinement({
+	container: document.querySelector('#toggle_technical'),
+	attribute: 'technical',
+	on: true,
+	off: false,
+    })
+]);
+
 
 search.start();
