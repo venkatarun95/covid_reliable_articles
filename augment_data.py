@@ -15,7 +15,7 @@ def augment_data(url: str, google_date) -> Dict[str, str]:
         article.parse()
     except Exception as e:
         print(e)
-        return {'date': 0}
+        return {'text': '', 'date': 0}
     res['html'] = article.html
     res['text'] = article.text
     res['title'] = article.title
@@ -28,7 +28,10 @@ def augment_data(url: str, google_date) -> Dict[str, str]:
             date_unix = int(parser.parse(date).timestamp())
         res['date'] = date_unix
     else:
-        res['date'] = int(parser.parse(google_date).timestamp())
+        try:
+            res['date'] = int(parser.parse(google_date).timestamp())
+        except:
+            res['date'] = 0
 
     # article.nlp()
     # res['summary'] = article.summary

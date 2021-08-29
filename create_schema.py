@@ -65,7 +65,8 @@ def create_schema(client: Client):
             {
                 'name': 'technical',
                 'type': 'bool',
-                'optional': True
+                'optional': True,
+                'facet': True
             }
         ],
         'default_sorting_field':

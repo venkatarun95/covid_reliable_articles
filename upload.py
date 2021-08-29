@@ -1,6 +1,7 @@
 from augment_data import augment_data
 from download_sheet import download_sheet
 
+from dateutil import parser
 import os
 import pickle as pkl
 import requests
@@ -42,7 +43,7 @@ def upload_articles(values: List[List[str]], client: Client):
             if row_doc['text'] is None:
                 continue
             if google_date != '':
-                res['date'] = int(parser.parse(google_date).timestamp())
+                row_doc['date'] = int(parser.parse(google_date).timestamp())
             else:
                 row_doc['date'] = 0
         else:
@@ -50,8 +51,8 @@ def upload_articles(values: List[List[str]], client: Client):
             for x in dat:
                 row_doc[x] = dat[x]
         print(url)
-        
-        row_doc['tech_tag'] = str(tagger.predict_tag(row_doc['text'])[0])
+
+        row_doc['technical'] = bool(tagger.predict_tag(row_doc['text'])[0])
 
         try:
             client.collections['reliable_articles'].documents.create(row_doc)
