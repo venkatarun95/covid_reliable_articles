@@ -57,7 +57,7 @@ def url_to_source(url):
     	["jnj", "JnJ"],
     	["astrazeneca", "Astra Zeneca"],
     	["bmj", "BMJ"],
-    	["echnologyreview", "Technology Review"],
+    	["technologyreview", "Technology Review"],
     	["globalhealth.stanford", "Stanford Univ."],
     	["iisc", "Indian Institute of Science"],
     	["caltech", "CalTech"],
@@ -75,7 +75,7 @@ def url_to_source(url):
     ];
     host = urlparse(url).hostname
     for s in sources:
-        if host.find(s[0]):
+        if host.find(s[0]) != -1:
             return s[1]
     return ""
     

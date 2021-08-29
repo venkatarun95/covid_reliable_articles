@@ -9,7 +9,7 @@ if False:
             'protocol': 'http'  # For Typesense Cloud use https
         }],
         'api_key':
-        'xyz',
+        '8T5TAAbOxup2P3FOvbDPAd77o2yOf8AI',
         'connection_timeout_seconds':
         2
     })
