@@ -145,7 +145,6 @@ const renderToggleRefinement = (renderOptions, isFirstRender) => {
 	label.appendChild(text);
 	text.appendChild(span);
 
-	console.log(widgetParams);
 	widgetParams.container.appendChild(label);
     }
 
