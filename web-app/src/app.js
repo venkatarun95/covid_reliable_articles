@@ -73,48 +73,82 @@ function ts_to_date(ts) {
     return date.toDateString();
 }
 
+function renderHitItem(hit) {
+    // See how long the snippet is
+    const snippet = instantsearch.snippet({ attribute: 'text', hit });
+    let display_text;
+    if (snippet.length > 200) {
+	// Sometimes description has "2 days ago...", remove it
+	const remove = hit.description.indexOf("ago ...");
+	if (remove != -1) {
+	    display_text = hit.description.substring(remove + 7);
+	}
+	else {
+	    display_text = hit.description
+	}
+    }
+    else {
+	display_text = snippet
+    }
+
+    return `
+<div class="card" style="width: 18rem;">
+  <a href=${hit.url}>
+    <span class="position-absolute top-0 start-0 badge rounded-pill bg-secondary">${url_to_source(hit.url)}</span>
+    <img src="${hit.top_image}" class="card-img-top" alt="..." onerror="this.style.display='none'">
+  </a>
+  <div class="card-body">
+    <a href=${hit.url}>
+      <h5 class="card-title">${instantsearch.snippet({ attribute: 'title', hit })}</h5>
+    </a>
+    <p class="card-text">${display_text}</p>
+    <!--<span class="badge rounded-pill bg-light text-dark">${url_to_source(hit.url)}</span>-->
+    <span class="badge rounded-pill bg-light text-dark" style="float: left">${ts_to_date(hit.date)}</span>
+  </div>
+</div>`;
+//  return `
+//   <a href=${hit.url}><b>
+//     <div><b>
+//         ${instantsearch.snippet({ attribute: 'title', hit })}
+//       </b></div>
+// <img src="${hit.top_image}" onerror="this.style.display='none'" class="img-fluid img-thumbnail"/>
+// </a>
+// <div>${display_text}</div>
+// <div>
+//   <span class="badge rounded-pill bg-light text-dark">${url_to_source(hit.url)}</span>
+//   <span class="badge rounded-pill bg-light text-dark" style="float: right">${ts_to_date(hit.date)}</span>
+// </div>
+// </div>`;
+
+}
+
+const renderHits = (renderOptions, isFirstRender) => {
+  const { hits } = renderOptions;
+
+  document.querySelector('#hits').innerHTML = `
+      ${hits
+        .map(
+          item => renderHitItem(item),
+        )
+        .join('')}
+  `;
+};
+
+const customHits = instantsearch.connectors.connectHits(renderHits);
+
 search.addWidgets([
     instantsearch.widgets.searchBox({
 	container: '#searchbox',
     }),
-    instantsearch.widgets.hits({
-	container: '#hits',
-	templates: {
-	    item(hit) {
-		// See how long the snippet is
-		const snippet = instantsearch.snippet({ attribute: 'text', hit });
-		let display_text;
-		if (snippet.length > 200) {
-		    // Sometimes description has "2 days ago...", remove it
-		    const remove = hit.description.indexOf("ago ...");
-		    if (remove != -1) {
-			display_text = hit.description.substring(remove + 7);
-		    }
-		    else {
-			display_text = hit.description
-		    }
-		}
-		else {
-		    display_text = snippet
-		}
-
-		return `
-<a href=${hit.url}><b>
-  <div><b>
-      ${instantsearch.snippet({ attribute: 'title', hit })}
-    </b></div>
-<img src="${hit.top_image}" onerror="this.style.display='none'" class="img-fluid img-thumbnail"/>
-</a>
-<div>${display_text}</div>
-<div>
-  <span class="badge rounded-pill bg-light text-dark">${url_to_source(hit.url)}</span>
-  <span class="badge rounded-pill bg-light text-dark" style="float: right">${ts_to_date(hit.date)}</span>
-</div>
-
-                `;
-	    }
-	},
-    }),
+    // instantsearch.widgets.hits({
+    // 	container: '#hits',
+    // 	cssClasses: {
+    // 	    item: 'something',
+    // 	},
+    // 	templates: {
+    // 	},
+    // }),
+    customHits(),
     instantsearch.widgets.pagination({
 	container: '#pagination',
     }),
