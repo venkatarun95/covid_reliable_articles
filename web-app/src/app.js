@@ -17,15 +17,32 @@ const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
   //  So you can pass any parameters supported by the search endpoint below.
   //  queryBy is required.
   additionalSearchParameters: {
-      queryBy: "title,google_title,text",
-      queryByWeights: "5,5,1"
+      queryBy: "title,google_title,source,text",
+      queryByWeights: "5,5,5,1",
   }
 });
 const searchClient = typesenseInstantsearchAdapter.searchClient;
 
+const customSearchClient = {
+    ...searchClient,
+    search(requests) {
+	for (let i in requests) {
+	    console.log(requests[i]);
+	    if (requests[i].params.query == "") {
+		if (requests[i].params.facetFilters == undefined) {
+		    requests[i].params.facetFilters = []
+		}
+		requests[i].params.facetFilters.push(["source:Scientific American", "source:National Geographic", "source:Dear Pandemic", "source:Unbiased Science Podcast", "source:Your Local Epidemiologist", "source:Nature", "source:Science", "source:Technology Review", "source:Hood Medicine"]);
+	    }
+	}
+	console.log(requests)
+	return searchClient.search(requests)
+    },
+};
+
 const search = instantsearch({
-  searchClient,
-  indexName: "reliable_articles"
+    searchClient: customSearchClient,
+    indexName: "reliable_articles"
 });
 
 function url_to_source(url) {
@@ -94,7 +111,7 @@ function renderHitItem(hit) {
     return `
 <div class="card" style="width: 18rem;">
   <a href=${hit.url}>
-    <span class="position-absolute top-0 start-0 badge rounded-pill bg-secondary">${url_to_source(hit.url)}</span>
+    <span class="position-absolute top-0 start-0 badge rounded-pill bg-secondary">${hit.source}</span>
     <img src="${hit.top_image}" class="card-img-top" alt="..." onerror="this.style.display='none'" onload="if (this.naturalWidth < 50 || this.naturalHeight < 50) { this.style.display='none'; }">
   </a>
   <div class="card-body">
@@ -106,20 +123,6 @@ function renderHitItem(hit) {
     <span class="badge rounded-pill bg-light text-dark" style="float: left">${ts_to_date(hit.date)}</span>
   </div>
 </div>`;
-//  return `
-//   <a href=${hit.url}><b>
-//     <div><b>
-//         ${instantsearch.snippet({ attribute: 'title', hit })}
-//       </b></div>
-// <img src="${hit.top_image}" onerror="this.style.display='none'" class="img-fluid img-thumbnail"/>
-// </a>
-// <div>${display_text}</div>
-// <div>
-//   <span class="badge rounded-pill bg-light text-dark">${url_to_source(hit.url)}</span>
-//   <span class="badge rounded-pill bg-light text-dark" style="float: right">${ts_to_date(hit.date)}</span>
-// </div>
-// </div>`;
-
 }
 
 const renderHits = (renderOptions, isFirstRender) => {
@@ -139,6 +142,7 @@ const customHits = instantsearch.connectors.connectHits(renderHits);
 search.addWidgets([
     instantsearch.widgets.searchBox({
 	container: '#searchbox',
+	autofocus: true
     }),
     // instantsearch.widgets.hits({
     // 	container: '#hits',
