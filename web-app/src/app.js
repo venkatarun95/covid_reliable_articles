@@ -147,6 +147,8 @@ const renderHits = (renderArgs, isFirstRender) => {
 
 	var sentinel = document.getElementById("hits_sentinel");
 	observer.observe(sentinel);
+
+	sentinel.addEventListener("click", showMore);
     }
 
     document.querySelector('#hits').innerHTML = `
