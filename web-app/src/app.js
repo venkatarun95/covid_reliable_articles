@@ -4,10 +4,10 @@ import TypesenseInstantSearchAdapter from "typesense-instantsearch-adapter";
 
 const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
   server: {
-    apiKey: "of6UKGWwOb5xzOLACj8u6WrKAOTgmE4Z",
+    apiKey: "",
     nodes: [
       {
-        host: "typesense.pandemic19.info",
+        host: "",
         port: "443",
         protocol: "https"
       }
@@ -130,21 +130,35 @@ function renderHitItem(hit) {
 </div>`;
 }
 
-const renderHits = (renderOptions, isFirstRender) => {
-    // const { hits, showMore, widgetParams } = renderOptions;
-    const { hits } = renderOptions;
+let lastRenderArgs;
+const renderHits = (renderArgs, isFirstRender) => {
+    const { hits, showMore, widgetParams } = renderArgs;
 
-  document.querySelector('#hits').innerHTML = `
+    lastRenderArgs = renderArgs;
+
+    if (isFirstRender) {
+	const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+		if (entry.isIntersecting && !lastRenderArgs.isLastPage) {
+		    showMore();
+		}
+            });
+	});
+
+	var sentinel = document.getElementById("hits_sentinel");
+	observer.observe(sentinel);
+    }
+
+    document.querySelector('#hits').innerHTML = `
       ${hits
         .map(
           item => renderHitItem(item),
         )
         .join('')}
-  `;
+    `;
 };
 
-const customHits = instantsearch.connectors.connectHits(renderHits);
-// const customHits = instantsearch.connectors.connectInfiniteHits(renderHits);
+const customHits = instantsearch.connectors.connectInfiniteHits(renderHits);
 
 var searchBoxWidget = instantsearch.widgets.searchBox({
     container: '#searchbox',
@@ -153,10 +167,7 @@ var searchBoxWidget = instantsearch.widgets.searchBox({
 
 search.addWidgets([
     searchBoxWidget,
-    customHits(),
-    instantsearch.widgets.pagination({
-    	container: '#pagination',
-    }),
+    customHits()
 ]);
 
 document.getElementById("scholarly").addEventListener("click", search.scheduleSearch);
