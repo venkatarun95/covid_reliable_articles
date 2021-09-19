@@ -4,10 +4,10 @@ import TypesenseInstantSearchAdapter from "typesense-instantsearch-adapter";
 
 const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
   server: {
-    apiKey: "",
+    apiKey: "of6UKGWwOb5xzOLACj8u6WrKAOTgmE4Z",
     nodes: [
       {
-        host: "",
+        host: "typesense.pandemic19.info",
         port: "443",
         protocol: "https"
       }
@@ -27,12 +27,17 @@ const customSearchClient = {
     ...searchClient,
     search(requests) {
 	for (let i in requests) {
-	    console.log(requests[i]);
 	    if (requests[i].params.query == "") {
 		if (requests[i].params.facetFilters == undefined) {
 		    requests[i].params.facetFilters = []
 		}
 		requests[i].params.facetFilters.push(["source:Scientific American", "source:National Geographic", "source:Dear Pandemic", "source:Unbiased Science Podcast", "source:Your Local Epidemiologist", "source:Nature", "source:Science", "source:Technology Review", "source:Hood Medicine"]);
+	    }
+	    if (!document.getElementById("scholarly").checked) {
+		if (requests[i].params.facetFilters == undefined) {
+		    requests[i].params.facetFilters = []
+		}
+		requests[i].params.facetFilters.push("technical:false");
 	    }
 	}
 	console.log(requests)
@@ -126,7 +131,8 @@ function renderHitItem(hit) {
 }
 
 const renderHits = (renderOptions, isFirstRender) => {
-  const { hits } = renderOptions;
+    // const { hits, showMore, widgetParams } = renderOptions;
+    const { hits } = renderOptions;
 
   document.querySelector('#hits').innerHTML = `
       ${hits
@@ -138,71 +144,22 @@ const renderHits = (renderOptions, isFirstRender) => {
 };
 
 const customHits = instantsearch.connectors.connectHits(renderHits);
+// const customHits = instantsearch.connectors.connectInfiniteHits(renderHits);
+
+var searchBoxWidget = instantsearch.widgets.searchBox({
+    container: '#searchbox',
+    autofocus: true,
+});
 
 search.addWidgets([
-    instantsearch.widgets.searchBox({
-	container: '#searchbox',
-	autofocus: true
-    }),
-    // instantsearch.widgets.hits({
-    // 	container: '#hits',
-    // 	cssClasses: {
-    // 	    item: 'something',
-    // 	},
-    // 	templates: {
-    // 	},
-    // }),
+    searchBoxWidget,
     customHits(),
     instantsearch.widgets.pagination({
-	container: '#pagination',
+    	container: '#pagination',
     }),
 ]);
 
-const renderToggleRefinement = (renderOptions, isFirstRender) => {
-    const { value, refine, widgetParams } = renderOptions;
-
-    if (isFirstRender) {
-	const label = document.createElement('label');
-	const input = document.createElement('input');
-	input.type = 'checkbox';
-	input.setAttribute('class', 'form-check-input');
-	input.setAttribute('id', 'toggle_technical_check');
-	const text = document.createElement('label');
-	text.setAttribute('class', 'form-check-label');
-	text.setAttribute('for', 'toggle_technical_check');
-	text.appendChild(document.createTextNode('Scholarly articles'));
-
-	const span = document.createElement('span');
-
-	input.addEventListener('change', event => {
-	    refine({ isRefined: !event.target.checked });
-	});
-
-	label.appendChild(input);
-	//label.appendChild(document.createTextNode('Include technical articles'));
-	label.appendChild(text);
-	text.appendChild(span);
-
-	widgetParams.container.appendChild(label);
-    }
-
-    widgetParams.container.querySelector('input').checked = value.isRefined;
-    // widgetParams.container.querySelector('span').innerHTML =
-    // 	value.count !== null ? ` (${value.count})` : '';
-};
-
-const customToggleRefinement = instantsearch.connectors.connectToggleRefinement(
-  renderToggleRefinement
-);
-
-search.addWidgets([
-    customToggleRefinement({
-	container: document.querySelector('#toggle_technical'),
-	attribute: 'technical',
-	on: true,
-	off: false,
-    })
-]);
-
+document.getElementById("scholarly").addEventListener("click", search.scheduleSearch);
 
 search.start();
+console.log(search)
