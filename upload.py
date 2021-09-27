@@ -23,7 +23,8 @@ def upload_articles(values: List[List[str]], client: Client):
             'q':
             '*',
             'filter_by':
-            'url: %s' % url,
+            #'url: %s' % url,
+            f'id: {i}',
             'per_page':
             0,
         })
@@ -36,10 +37,21 @@ def upload_articles(values: List[List[str]], client: Client):
             'google_title': title,
             'description': description
         }
-        
-        if utils.url_classifier(url) == "pdf":
+
+        try:
+            file_type = utils.url_classifier(url)
+        except Exception as e:
+            print(e)
+            continue
+
+        if file_type == "pdf":
             row_doc['title'] = row_doc['google_title']
-            row_doc['text'] = utils.get_pdf_text(url)
+            try:
+                row_doc['text'] = utils.get_pdf_text(url)
+            except Exception as e:
+                print(e)
+                continue
+
             if row_doc['text'] is None:
                 continue
             if google_date != '':
