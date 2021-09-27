@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#000000">
+
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="shortcut icon" href="./logo.jpeg">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css">
+  <link rel="stylesheet" href="./src/index.css">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+  <title>Covid Info</title>
+
+  <style>
+    .source-list {
+	float: left;
+	width: 25%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row justify-content-start align-items-center">
+      <div class="col-md-auto" style="--bs-gutter-x:0;">
+	<img src="logo.jpeg" style="width:100px;">
+      </div>
+      <div class="col" style="--bs-gutter-x:0; height:100%;">
+	<h1>Reliable COVID-19 Information</h1>
+	<h5 class="text-muted">A <a href="https://pathcheck.org" class="text-muted" style="text-decoration: none;">PathCheck Foundation</a> Project</h5>
+      </div>
+    </div>
+
+    <div class="row">
+      <h2>A repository of reliable information about COVID-19</h2>
+      <p>Even news sources that one might believe are "trustworthy" often contain harmful misinformation about the pandemic. This is because journalists are not scientists, and can miss the nuances of how the pandemic works. To provide a source of reliable information, we have curated some sources that contain only high quality information. Using this site, you can search through articles exclusively from these high quality sources. Here is the list of sources we use:</p>
+    </div>
+    <div class="row" style="border: 1px solid #ccc; border-radius: 5px; margin-left: 20px; margin-right:20px; padding-bottom:5px">
+      <h5>Sources:</h5>
+      <hr>
+      <div class="col-md-3"><a href='https://www.thelancet.com'>The Lancet</a></div>
+      <div class="col-md-3"><a href='https://www.nejm.org'>New England Journal of Medicine</a></div>
+      <div class="col-md-3"><a href='https://jamanetwork.com'>JAMA</a></div>
+      <div class="col-md-3"><a href='https://www.scientificamerican.com'>Scientific American</a></div>
+      <div class="col-md-3"><a href='https://www.cdc.gov'>CDC</a></div>
+      <div class="col-md-3"><a href='https://www.nature.com'>Nature</a></div>
+      <div class="col-md-3"><a href='https://www.sciencemag.com'>Science</a></div>
+      <div class="col-md-3"><a href='https://www.pfizer.com'>Pfizer</a></div>
+      <div class="col-md-3"><a href='https://modernatx.com'>Moderna</a></div>
+      <div class="col-md-3"><a href='https://yourlocalepidemiologist.substack.com'>Your local epidemiologist</a></div>
+      <div class="col-md-3"><a href='https://jnj.com'>Johnson and Johnson</a></div>
+      <div class="col-md-3"><a href='https://astrazeneca.com'>Astra Zeneca</a></div>
+      <div class="col-md-3"><a href='https://www.bmj.com'>BMJ</a></div>
+      <div class="col-md-3"><a href='https://www.technologyreview.com'>MIT Tech Review</a></div>
+      <div class="col-md-3"><a href='https://globalhealth.stanford.edu'>Stanford Global Health</a></div>
+      <div class="col-md-3"><a href='https://covidadvisories.iisc.ac.in/'>IISC COVID Advisory</a></div>
+      <div class="col-md-3"><a href='https://scienceexchange.caltech.edu/topics/covid-19-coronavirus-sars-cov-2'>Caltech Science Exchange</a></div>
+      <div class="col-md-3"><a href='https://together.caltech.edu/news?tag=emerging%20diseases'>Caltech Science Emerging Diseases</a></div>
+      <div class="col-md-3"><a href='https://together.caltech.edu/'>Caltech Together</a></div>
+      <div class="col-md-3"><a href='https://www.hopkinsmedicine.org/news/newsroom/news-releases?page=2'>JHU newsroom</a></div>
+      <div class="col-md-3"><a href='https://www.hopkinsmedicine.org/health/conditions-and-diseases/coronavirus'>JHU Medicine</a></div>
+      <div class="col-md-3"><a href='https://www.ucsf.edu/topic/covid-19'>UCSF magazine</a></div>
+      <div class="col-md-3"><a href='https://www.unbiasedscipod.com/'>Unbiased Science Podcast</a></div>
+      <div class="col-md-3"><a href='https://www.hoodmedicine.org/covid-19-info-center/'>Hood Medicine COVID-19 Resources</a></div>
+      <div class="col-md-3"><a href='https://research.princeton.edu/research-administration/covid-19-information-researchers/covid-19-research-news'>Princeton COVID-19 information</a></div>
+      <div class="col-md-3"><a href='https://theconversation.com/us/covid-19'>The Conversation</a></div>
+      <div class="col-md-3"><a href='https://dearpandemic.org/posts/'>Dear Pandemic</a></div>
+      <div class="col-md-3"><a href='https://www.kyoto-u.ac.jp/en/research-news?page=0'>Kyoto University</a></div>
+      <div class="col-md-3"><a href='https://www.nature.com/nm/'>Nature Medicine</a></div>
+      <div class="col-md-3"><a href='https://jamanetwork.com/collections/5702/infectious-diseases'>JAMA Infectious Disease</a></div>
+      <div class="col-md-3"><a href='https://www.ucsusa.org/resources'>Union of Concerned Scientists</a></div>
+      <div class="col-md-3"><a href='https://firstdraftnews.org/'>First Draft</a></div>
+      <div class="col-md-3"><a href='https://www.who.int/southeastasia'>WHO SEARO</a></div>
+      <div class="col-md-3"><a href='https://www.nih.gov/news-events/nih-research-matters'>NIH research matters</a></div>
+      <div class="col-md-3"><a href='https://www.nationalgeographic.com/science/'>National Geographic</a></div>
+      <div class="col-md-3"><a href='https://directorsblog.nih.gov/'>NIH Director's Blog</a></div>
+    </div>
+    <div class="row" style="margin-top:20px;">
+      <h5>About Us:</h5>
+      <p>We are a group of volunteers who coordinate over the community at <a href="https://pathcheck.org">PathCheck</a>. You can find us at PathCheck's <a href="https://pathcheck.slack.com">slack workspace</a> in the <a href="https://pathcheck.slack.com/messages/_spike_fact_checking">&#35_spike_fact_checking</a> channel.</p>
+      <p><b>Code: </b> This website is free software released under the Apache 2.0 license and available at <a href="https://github.com/venkatarun95/covid_reliable_articles/">github.com/venkatarun95/covid_reliable_articles</a>.</p>
+    </div>
+    <div class="row">
+      <h5>Team:</h5>
+      <div class="card" style="width: 18rem; float:left">
+	<img src="imgs/venkat.jpg" class="card-img-top" alt="Venkat Arun">
+	<div class="card-body">
+	  <h5 class="card-title"><a href="https://people.csail.mit.edu/venkatar/">Venkat Arun</a></h5>
+	  <p class="card-text">PhD Student, MIT</p>
+	</div>
+      </div>
+      <div class="card" style="width: 18rem; float:left">
+	<img src="imgs/sethu.jpg" class="card-img-top" alt="Sethuraman TV">
+	<div class="card-body">
+	  <h5 class="card-title"><a href="https://sethuramantv001.medium.com/">Sethuraman TV</a></h5>
+	  <p class="card-text">ML Researcher, IIT-Madras</p>
+	</div>
+      </div>
+      <div class="card" style="width: 18rem; float:left">
+	<img src="imgs/krish.jpeg" class="card-img-top" alt="Krishnendu Dasgupta">
+	<div class="card-body">
+	  <h5 class="card-title"><a href="#">Krishnendu Dasgupta</a></h5>
+	  <p class="card-text">Working in Public Health , Medical Imaging , Public policy , Federated Learning</p>
+	</div>
+      </div>
+      <div class="card" style="width: 18rem; float:left">
+	<img src="imgs/agrima.jpg" class="card-img-top" alt="Agrima Seth">
+	<div class="card-body">
+	  <h5 class="card-title"><a href="https://www.si.umich.edu/people/agrima-seth">Agrima Seth</a></h5>
+	  <p class="card-text">PhD Student, University of Michigan</p>
+	</div>
+      </div>
+      <div class="card" style="width: 18rem; float:left">
+	<img src="imgs/govind.jpeg" class="card-img-top" alt="Govind Jeevan">
+	<div class="card-body">
+	  <h5 class="card-title"><a href="https://github.com/govindjeevan">Govind Jeevan</a></h5>
+	  <p class="card-text">Software Engineer, Visa</p>
+	</div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:20px;">
+      <p><b>Disclaimer:</b> The service is provided "as is", without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the creators, the maintainers or the PathCheck foundation be liable for any claim damages or other liability, whether in action of contract, tort of otherwise, arising from, out of or in connection with this website.</p>
+    </div>
+  </div>
+</body>
