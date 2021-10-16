@@ -39,7 +39,7 @@ def upload_articles(values: List[List[str]], client: Client):
         }
 
         try:
-            file_type = utils.url_classifier(url)
+            file_type = utils.get_content_type(url)
         except Exception as e:
             print(e)
             continue
@@ -88,7 +88,7 @@ if __name__ == "__main__":
         print(s)
         exit(0)
 
-    if os.path.isfile('test_downloaded.pkl'):
+    if False and os.path.isfile('test_downloaded.pkl'):
         with open('test_downloaded.pkl', 'rb') as f:
             values = pkl.load(f)
     else:

@@ -31,7 +31,7 @@ const customSearchClient = {
 		if (requests[i].params.facetFilters == undefined) {
 		    requests[i].params.facetFilters = []
 		}
-		requests[i].params.facetFilters.push(["source:Scientific American", "source:National Geographic", "source:Dear Pandemic", "source:Unbiased Science Podcast", "source:Your Local Epidemiologist", "source:Nature", "source:Science", "source:Technology Review", "source:Hood Medicine"]);
+		requests[i].params.facetFilters.push(["source:Scientific American", "source:National Geographic", "source:Dear Pandemic", "source:Unbiased Science Podcast", "source:Your Local Epidemiologist", "source:Science", "source:Technology Review", "source:Hood Medicine", "source:Nature"]);
 	    }
 	    if (!document.getElementById("scholarly").checked) {
 		if (requests[i].params.facetFilters == undefined) {
@@ -40,7 +40,6 @@ const customSearchClient = {
 		requests[i].params.facetFilters.push("technical:false");
 	    }
 	}
-	console.log(requests)
 	return searchClient.search(requests)
     },
 };
@@ -96,6 +95,34 @@ function ts_to_date(ts) {
 }
 
 function renderHitItem(hit) {
+    // Avoid showing boring articles when there is no search term
+    if (document.getElementsByClassName("ais-SearchBox-input")[0].value == "") {
+	// Bunch of nature articles are boring. Look for this "boring words"
+	if (hit.source == "Nature") {
+	    let title = hit.title.toLowerCase();
+	    let banned = ["nature", "article", "comment", "highlights", "author", "correspondence", "news", "volume", "view", "review", "communication"];
+	    for (let i in banned) {
+		if (title.indexOf(banned[i]) != -1) {
+		    return "";
+		}
+	    }
+	}
+
+	let banned_urls = new Set();
+	banned_urls.add("https://yourlocalepidemiologist.substack.com/archive");
+	banned_urls.add("https://www.technologyreview.com/author/insight/");
+	banned_urls.add("https://www.technologyreview.com/topic/covid-pandemic-tech/");
+	banned_urls.add("https://yourlocalepidemiologist.substack.com/archive?utm_source=menu-dropdown");
+	banned_urls.add("https://www.technologyreview.com/author/debora-mackenzie/");
+	banned_urls.add("https://www.nationalgeographic.com/science");
+	banned_urls.add("https://www.technologyreview.com/tag/coronavirus-covid-19-news/");
+	banned_urls.add("https://www.scientificamerican.com/author/bob-hirshon/");
+	banned_urls.add("https://www.nationalgeographic.com/science/topic/coronavirus-coverage");
+	if (banned_urls.has(hit.url)) {
+	    return "";
+	}
+    }
+
     // See how long the snippet is
     const snippet = instantsearch.snippet({ attribute: 'text', hit });
     let display_text;
@@ -125,7 +152,7 @@ function renderHitItem(hit) {
     </a>
     <p class="card-text">${display_text}</p>
     <!--<span class="badge rounded-pill bg-light text-dark">${url_to_source(hit.url)}</span>-->
-    <span class="badge rounded-pill bg-light text-dark" style="float: left">${ts_to_date(hit.date)}</span>
+    <!--<span class="badge rounded-pill bg-light text-dark" style="float: left">${ts_to_date(hit.date)}</span>-->
   </div>
 </div>`;
 }
@@ -151,13 +178,31 @@ const renderHits = (renderArgs, isFirstRender) => {
 	sentinel.addEventListener("click", showMore);
     }
 
-    document.querySelector('#hits').innerHTML = `
-      ${hits
-        .map(
-          item => renderHitItem(item),
-        )
-        .join('')}
-    `;
+    let renderedHTML = "";
+    let num_rendered = "";
+    for (let i in hits) {
+	const rendered = renderHitItem(hits[i]);
+	renderedHTML += rendered;
+	if (rendered != "") {
+	    num_rendered += 1;
+	}
+    }
+    document.querySelector('#hits').innerHTML = renderedHTML;
+    // document.querySelector('#hits').innerHTML = `
+    //   ${hits
+    //     .map(
+    //       item => renderHitItem(item),
+    //     )
+    //     .join('')}
+    // `;
+
+    // When query string is "", we need multiple reloads to ensure at-least one
+    // non-boring article is loaded (i.e. is not rejected by
+    // renderHitItem). Since, if no new articles are shown, the sentinel never
+    // moves out of view, it is useful to handle this case separately
+    if (document.getElementsByClassName("ais-SearchBox-input")[0].value == "" && num_rendered < 10) {
+	showMore();
+   } l
 };
 
 const customHits = instantsearch.connectors.connectInfiniteHits(renderHits);
@@ -175,4 +220,3 @@ search.addWidgets([
 document.getElementById("scholarly").addEventListener("click", search.scheduleSearch);
 
 search.start();
-console.log(search)

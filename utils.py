@@ -3,9 +3,15 @@ from pathlib import Path
 import fitz
 import os
 
+# We need some user-agent otherwise some websites return 403
+req_headers = {
+    "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:92.0) Gecko/20100101 Firefox/92.0"
+}
+
 def get_pdf_text(url):
+    global req_headers
     filename = Path('temp.pdf')
-    response = requests.get(url)
+    response = requests.get(url, headers=req_headers)
     filename.write_bytes(response.content)
     try:
         doc = fitz.open("temp.pdf")
@@ -31,7 +37,8 @@ def url_classifier(url):
         return "default"
 
 def get_content_type(url):
-    header = requests.head(url).headers
+    global req_headers
+    header = requests.head(url, headers=req_headers).headers
     ctype = header.get('content-type')
     if ctype is None:
         return False
