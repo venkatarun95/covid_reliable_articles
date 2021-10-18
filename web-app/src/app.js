@@ -154,7 +154,7 @@ function renderHitItem(hit) {
     }
 
     return `
-<div class="card" style="width: 18rem;">
+<div class="card col-md-3">
   <a href=${hit.url}>
     <span class="position-absolute top-0 start-0 badge rounded-pill bg-secondary">${hit.source}</span>
     <img src="${hit.top_image}" class="card-img-top" alt="..." onerror="this.style.display='none'" onload="if (this.naturalWidth < 50 || this.naturalHeight < 50) { this.style.display='none'; }">
