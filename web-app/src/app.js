@@ -31,13 +31,25 @@ const customSearchClient = {
 		if (requests[i].params.facetFilters == undefined) {
 		    requests[i].params.facetFilters = []
 		}
-		requests[i].params.facetFilters.push(["source:Scientific American", "source:National Geographic", "source:Dear Pandemic", "source:Unbiased Science Podcast", "source:Your Local Epidemiologist", "source:Science", "source:Technology Review", "source:Hood Medicine", "source:Nature"]);
-	    }
-	    if (!document.getElementById("scholarly").checked) {
-		if (requests[i].params.facetFilters == undefined) {
-		    requests[i].params.facetFilters = []
+		let news_feed_sources = [
+		    "source:Scientific American",
+		    "source:National Geographic",
+		    "source:Dear Pandemic",
+		    "source:Unbiased Science Podcast",
+		    "source:Your Local Epidemiologist",
+		    "source:Science",
+		    "source:Technology Review",
+		    "source:Hood Medicine",
+		    "source:Nature"];
+		if (document.getElementById('toggle-scholarly').querySelector("input") != null &&
+		    document.getElementById('toggle-scholarly').querySelector("input").checked) {
+		    news_feed_sources.push("source:JAMA");
+		    news_feed_sources.push("source:New England Journal of medicine");
+		    news_feed_sources.push("source:BMJ");
+		    news_feed_sources.push("source:Hopkins Medicine");
+		    news_feed_sources.push("source:UC San Francisco");
 		}
-		requests[i].params.facetFilters.push("technical:false");
+		requests[i].params.facetFilters.push(news_feed_sources);
 	    }
 	}
 	return searchClient.search(requests)
@@ -46,7 +58,8 @@ const customSearchClient = {
 
 const search = instantsearch({
     searchClient: customSearchClient,
-    indexName: "reliable_articles"
+    indexName: "reliable_articles",
+    routing: true
 });
 
 function url_to_source(url) {
@@ -141,7 +154,7 @@ function renderHitItem(hit) {
     }
 
     return `
-<div class="card" style="width: 18rem;">
+<div class="card col-md-3">
   <a href=${hit.url}>
     <span class="position-absolute top-0 start-0 badge rounded-pill bg-secondary">${hit.source}</span>
     <img src="${hit.top_image}" class="card-img-top" alt="..." onerror="this.style.display='none'" onload="if (this.naturalWidth < 50 || this.naturalHeight < 50) { this.style.display='none'; }">
@@ -179,7 +192,7 @@ const renderHits = (renderArgs, isFirstRender) => {
     }
 
     let renderedHTML = "";
-    let num_rendered = "";
+    let num_rendered = 0;
     for (let i in hits) {
 	const rendered = renderHitItem(hits[i]);
 	renderedHTML += rendered;
@@ -188,13 +201,6 @@ const renderHits = (renderArgs, isFirstRender) => {
 	}
     }
     document.querySelector('#hits').innerHTML = renderedHTML;
-    // document.querySelector('#hits').innerHTML = `
-    //   ${hits
-    //     .map(
-    //       item => renderHitItem(item),
-    //     )
-    //     .join('')}
-    // `;
 
     // When query string is "", we need multiple reloads to ensure at-least one
     // non-boring article is loaded (i.e. is not rejected by
@@ -205,6 +211,7 @@ const renderHits = (renderArgs, isFirstRender) => {
    }
 };
 
+
 const customHits = instantsearch.connectors.connectInfiniteHits(renderHits);
 
 var searchBoxWidget = instantsearch.widgets.searchBox({
@@ -212,11 +219,42 @@ var searchBoxWidget = instantsearch.widgets.searchBox({
     autofocus: true,
 });
 
+const scholarlyRenderRefinement = (renderOptions, isFirstRender) => {
+    const { value, refine, widgetParams } = renderOptions;
+
+    if (isFirstRender) {
+	const label = document.createElement('label');
+	const input = document.createElement('input');
+	input.type = 'checkbox';
+	input.setAttribute('class', 'form-check-input');
+
+	input.addEventListener('change', event => {
+	    refine({ isRefined: event.target.checked });
+	});
+
+	label.appendChild(input);
+	label.appendChild(document.createTextNode('Include scholarly articles'));
+
+	widgetParams.container.appendChild(label);
+	refine({isRefined: false});
+    }
+    else {
+	widgetParams.container.querySelector('input').checked = !value.isRefined;
+    }
+};
+
+const scholarlyRefinement = instantsearch.connectors.connectToggleRefinement(
+    scholarlyRenderRefinement
+);
+
 search.addWidgets([
     searchBoxWidget,
-    customHits()
+    customHits(),
+    scholarlyRefinement({
+	container: document.getElementById('toggle-scholarly'),
+	attribute: 'technical',
+	on: false,
+    })
 ]);
-
-document.getElementById("scholarly").addEventListener("click", search.scheduleSearch);
 
 search.start();
