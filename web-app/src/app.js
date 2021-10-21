@@ -24,6 +24,7 @@ const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
 const searchClient = typesenseInstantsearchAdapter.searchClient;
 
 const customSearchClient = {
+<<<<<<< HEAD
     ...searchClient,
     search(requests) {
 	for (let i in requests) {
@@ -60,6 +61,42 @@ const search = instantsearch({
     searchClient: customSearchClient,
     indexName: "reliable_articles",
     routing: true
+=======
+  ...searchClient,
+  search(requests) {
+    for (const i in requests) {
+      if (requests[i].params.query == '') {
+        if (requests[i].params.facetFilters == undefined) {
+          requests[i].params.facetFilters = [];
+        }
+        requests[i].params.facetFilters.push([
+          'source:Scientific American',
+          'source:National Geographic',
+          'source:Dear Pandemic',
+          'source:Unbiased Science Podcast',
+          'source:Your Local Epidemiologist',
+          'source:Nature',
+          'source:Science',
+          'source:Technology Review',
+          'source:Hood Medicine',
+        ]);
+      }
+      if (!document.getElementById('scholarly').checked) {
+        if (requests[i].params.facetFilters == undefined) {
+          requests[i].params.facetFilters = [];
+        }
+        requests[i].params.facetFilters.push('technical:false');
+      }
+    }
+    console.log(requests);
+    return searchClient.search(requests);
+  },
+};
+
+const search = instantsearch({
+  searchClient: customSearchClient,
+  indexName: 'reliable_articles',
+>>>>>>> 7bb5fefcf825f8914ebbbcbb7e66f77e5449c077
 });
 
 function url_to_source(url) {
@@ -124,6 +161,7 @@ function renderHitItem(hit) {
   }
 
   return `
+<<<<<<< HEAD
   <div class="card col-md-3">
     <a href=${hit.url}>
       <span class="position-absolute top-0 start-0 badge rounded-pill bg-secondary">${hit.source}</span>
@@ -145,6 +183,45 @@ function renderHitItem(hit) {
       <!--<span class="badge rounded-pill bg-light text-dark" style="float: left">${ts_to_date(hit.date)}</span>-->
     </div>
   </div>`;
+=======
+<div class="card" style="width: 18rem;">
+  <a href=${hit.url}>
+    <span class="position-absolute top-0 start-0 badge rounded-pill bg-secondary">${
+      hit.source
+    }</span>
+    <img src="${
+      hit.top_image
+    }" class="card-img-top" alt="..." onerror="this.style.display='none'" onload="if (this.naturalWidth < 50 || this.naturalHeight < 50) { this.style.display='none'; }">
+  </a>
+  <div class="card-body">
+  <div class="card-title">
+    <a href=${hit.url}>
+      <h5 >${instantsearch.snippet({
+        attribute: 'title',
+        hit,
+      })}
+      </a>
+      <div class="content_img">
+      <img class = "pic" src="https://cdn.codechef.com/misc/tick-icon.gif" width='100%' height='100%'>
+      <div>
+          <img src="https://cdn.codechef.com/misc/tick-icon.gif">
+      </div>
+      </div>
+      </h5>
+</div>
+
+
+
+    <p class="card-text">${display_text}</p>
+    <!--<span class="badge rounded-pill bg-light text-dark">${url_to_source(
+      hit.url
+    )}</span>-->
+    <span class="badge rounded-pill bg-light text-dark" style="float: left">${ts_to_date(
+      hit.date
+    )}</span>
+  </div>
+</div>`;
+>>>>>>> 7bb5fefcf825f8914ebbbcbb7e66f77e5449c077
 }
 let lastRenderArgs;
 const renderHits = (renderArgs, isFirstRender) => {
@@ -167,6 +244,7 @@ const renderHits = (renderArgs, isFirstRender) => {
     sentinel.addEventListener('click', showMore);
   }
 
+<<<<<<< HEAD
     let renderedHTML = "";
     let num_rendered = 0;
     for (let i in hits) {
@@ -185,6 +263,11 @@ const renderHits = (renderArgs, isFirstRender) => {
     if (document.getElementsByClassName("ais-SearchBox-input")[0].value == "" && num_rendered < 10) {
 	showMore();
    }
+=======
+  document.querySelector('#hits').innerHTML = `
+      ${hits.map(item => renderHitItem(item)).join('')}
+    `;
+>>>>>>> 7bb5fefcf825f8914ebbbcbb7e66f77e5449c077
 };
 
 
@@ -195,6 +278,7 @@ const searchBoxWidget = instantsearch.widgets.searchBox({
   autofocus: true,
 });
 
+<<<<<<< HEAD
 const scholarlyRenderRefinement = (renderOptions, isFirstRender) => {
     const { value, refine, widgetParams } = renderOptions;
 
@@ -233,5 +317,13 @@ search.addWidgets([
     })
 ]);
 
+=======
+search.addWidgets([searchBoxWidget, customHits()]);
+
+document
+  .getElementById('scholarly')
+  .addEventListener('click', search.scheduleSearch);
+
+>>>>>>> 7bb5fefcf825f8914ebbbcbb7e66f77e5449c077
 search.start();
 console.log(search);
