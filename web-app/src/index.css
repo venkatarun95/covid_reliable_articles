@@ -8,3 +8,17 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 }
+.card {
+  margin: 1em 0;
+  text-align: center;
+}
+
+.card img {
+  width: 250px;
+  height: 250px;
+}
+
+.card img {
+  object-fit: cover;
+}
+

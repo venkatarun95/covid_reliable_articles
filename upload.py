@@ -16,9 +16,9 @@ def upload_articles(values: List[List[str]], client: Client):
     for (i, row) in enumerate(values):
         title = row[0]
         url = row[1]
+        publisher = row[2]
         google_date = row[4]
         description = row[5]
-
         resp = client.collections['reliable_articles'].documents.search({
             'q':
             '*',
@@ -59,17 +59,19 @@ def upload_articles(values: List[List[str]], client: Client):
             else:
                 row_doc['date'] = 0
         else:
-            dat = augment_data(url, google_date)
-            for x in dat:
-                row_doc[x] = dat[x]
-        print(url)
+            dat = augment_data(url, google_date, publisher)
+            if dat.keys():
+                for x in dat:
+                    row_doc[x] = dat[x]
+                print(url)
 
-        row_doc['technical'] = bool(tagger.predict_tag(row_doc['text'])[0])
+                row_doc['technical'] = bool(
+                    tagger.predict_tag(row_doc['text'])[0])
 
-        try:
-            client.collections['reliable_articles'].documents.create(row_doc)
-        except requests.exceptions.ConnectionError as e:
-            print(e)
+                try:
+                    client.collections['reliable_articles'].documents.create(row_doc)
+                except requests.exceptions.ConnectionError as e:
+                    print(e)
 
 
 if __name__ == "__main__":

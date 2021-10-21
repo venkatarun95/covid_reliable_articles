@@ -1,13 +1,41 @@
 from dateutil import parser
 from htmldate import find_date
-import json
 from newspaper import Article
 from typing import Dict
-from typesense import Client
 from urllib.parse import urlparse
+import requests
+from bs4 import BeautifulSoup
 
 
-def augment_data(url: str, google_date) -> Dict[str, str]:
+def fact_check_boom_live(url):
+    article = requests.get(url)
+    content = BeautifulSoup(article.content, features="lxml")
+    fact_check_instance = content.find("meta", {"content": "Fact Check"})
+    return fact_check_instance
+
+
+def fact_check_logically(url):
+    article = requests.get(url)
+    content = BeautifulSoup(article.content, features="lxml")
+    divTag = content.find_all("div", {"class": "grid-item-6"})
+    fact_check_instance = False
+    fact_check_instance_value = ""
+    for tag in divTag:
+        if len(tag.find_all(class_='fc-verdict fc-verdict-false wider')) > 0:
+            fact_check_instance = True
+            fact_check_instance_value = "False"
+        elif len(tag.find_all(
+                class_='fc-verdict fc-verdict-misleading wider')) > 0:
+            fact_check_instance = True
+            fact_check_instance_value = "Misleading"
+        elif len(tag.find_all(class_='fc-verdict fc-verdict-true wider')) > 0:
+            fact_check_instance = True
+            fact_check_instance_value = "True"
+
+    return fact_check_instance, fact_check_instance_value
+
+
+def augment_data(url: str, google_date, publisher) -> Dict[str, str]:
     res = {}
 
     try:
@@ -17,6 +45,19 @@ def augment_data(url: str, google_date) -> Dict[str, str]:
     except Exception as e:
         print(e)
         return {'text': '', 'date': 0}
+
+    if publisher == "Boom Live":
+        is_fact_check = fact_check_boom_live(url)
+        should_include = is_fact_check
+    elif publisher == "Logically":
+        is_fact_check, fact_check_value = fact_check_logically(url)
+        should_include = is_fact_check
+    else:
+        should_include = True
+
+    if not should_include:
+        return {}
+
     res['html'] = article.html
     res['text'] = article.text
     res['title'] = article.title
@@ -34,9 +75,6 @@ def augment_data(url: str, google_date) -> Dict[str, str]:
             res['date'] = int(parser.parse(google_date).timestamp())
         except:
             res['date'] = 0
-
-    # article.nlp()
-    # res['summary'] = article.summary
 
     return res
 
@@ -78,7 +116,7 @@ def url_to_source(url):
         if host.find(s[0]) != -1:
             return s[1]
     return ""
-    
+
 
 if __name__ == "__main__":
     print(augment_data('https://www.thelancet.com/pdfs/journals/landia/PIIS2213-8587(21)00059-0.pdf', '')['date'])
