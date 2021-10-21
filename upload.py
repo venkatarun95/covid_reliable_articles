@@ -65,13 +65,13 @@ def upload_articles(values: List[List[str]], client: Client):
                     row_doc[x] = dat[x]
                 print(url)
 
-                row_doc['technical'] = bool(tagger.predict_tag(row_doc['text'])[0])
+                row_doc['technical'] = bool(
+                    tagger.predict_tag(row_doc['text'])[0])
 
                 try:
                     client.collections['reliable_articles'].documents.create(row_doc)
                 except requests.exceptions.ConnectionError as e:
                     print(e)
-
 
 
 if __name__ == "__main__":
