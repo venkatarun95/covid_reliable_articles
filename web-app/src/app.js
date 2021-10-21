@@ -36,7 +36,6 @@ const customSearchClient = {
 		    "source:National Geographic",
 		    "source:Dear Pandemic",
 		    "source:Unbiased Science Podcast",
-		    "source:Your Local Epidemiologist",
 		    "source:Science",
 		    "source:Technology Review",
 		    "source:Hood Medicine",
@@ -111,9 +110,9 @@ function renderHitItem(hit) {
     // Avoid showing boring articles when there is no search term
     if (document.getElementsByClassName("ais-SearchBox-input")[0].value == "") {
 	// Bunch of nature articles are boring. Look for this "boring words"
-	if (hit.source == "Nature") {
+	if (hit.source == "Nature" || hit.source == "Scientific American") {
 	    let title = hit.title.toLowerCase();
-	    let banned = ["nature", "article", "comment", "highlights", "author", "correspondence", "news", "volume", "view", "review", "communication"];
+	    let banned = ["nature", "article", "comment", "highlights", "author", "correspondence", "news", "volume", "view", "review", "communication", "stories", "perspectives"];
 	    for (let i in banned) {
 		if (title.indexOf(banned[i]) != -1) {
 		    return "";
