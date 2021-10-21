@@ -202,7 +202,7 @@ const renderHits = (renderArgs, isFirstRender) => {
     // moves out of view, it is useful to handle this case separately
     if (document.getElementsByClassName("ais-SearchBox-input")[0].value == "" && num_rendered < 10) {
 	showMore();
-   } l
+   }
 };
 
 const customHits = instantsearch.connectors.connectInfiniteHits(renderHits);

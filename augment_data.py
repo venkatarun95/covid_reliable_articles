@@ -5,9 +5,38 @@ from newspaper import Article
 from typing import Dict
 from typesense import Client
 from urllib.parse import urlparse
+import requests
+import beautifulsoup4
+from bs4 import BeautifulSoup
+
+def fact_check_boom_live(url):
+    article = requests.get(url)
+    content = BeautifulSoup(article.content, features="lxml")
+    fact_check_instance = content.find("meta", {"content": "Fact Check"})
+    return fact_check_instance
+
+def fact_check_logically(url):
+
+    article = requests.get(url)
+    content = BeautifulSoup(article.content, features="lxml")
+    divTag = content.find_all("div", {"class": "grid-item-6"})
+    fact_check_instance = False
+    fact_check_instance_value = ""
+    for tag in divTag:
+        if len(tag.find_all(class_='fc-verdict fc-verdict-false wider')) > 0:
+            fact_check_instance = True
+            fact_check_instance_value = "False"
+        elif len(tag.find_all(class_='fc-verdict fc-verdict-misleading wider')) > 0:
+            fact_check_instance = True
+            fact_check_instance_value = "Misleading"
+        elif len(tag.find_all(class_='fc-verdict fc-verdict-true wider')) > 0:
+            fact_check_instance = True
+            fact_check_instance_value = "True"
+
+    return fact_check_instance, fact_check_instance_value
 
 
-def augment_data(url: str, google_date) -> Dict[str, str]:
+def augment_data(url: str, google_date, publisher) -> Dict[str, str]:
     res = {}
 
     try:
@@ -17,26 +46,35 @@ def augment_data(url: str, google_date) -> Dict[str, str]:
     except Exception as e:
         print(e)
         return {'text': '', 'date': 0}
-    res['html'] = article.html
-    res['text'] = article.text
-    res['title'] = article.title
-    res['top_image'] = article.top_image
-    res['source'] = url_to_source(url)
-    if google_date == '':
-        date = find_date(article.html)
-        if date is None:
-            date_unix = 0
-        else:
-            date_unix = int(parser.parse(date).timestamp())
-        res['date'] = date_unix
-    else:
-        try:
-            res['date'] = int(parser.parse(google_date).timestamp())
-        except:
-            res['date'] = 0
 
-    # article.nlp()
-    # res['summary'] = article.summary
+    ## Fact checking for boom live
+    if publisher == "Boom Live":
+        is_fact_check = fact_check_boom_live(url)
+    elif publisher == "Logically":
+        is_fact_check, fact_check_value = fact_check_logically(url)
+
+    if is_fact_check:
+
+        res['html'] = article.html
+        res['text'] = article.text
+        res['title'] = article.title
+        res['top_image'] = article.top_image
+        res['source'] = url_to_source(url)
+        if google_date == '':
+            date = find_date(article.html)
+            if date is None:
+                date_unix = 0
+            else:
+                date_unix = int(parser.parse(date).timestamp())
+            res['date'] = date_unix
+        else:
+            try:
+                res['date'] = int(parser.parse(google_date).timestamp())
+            except:
+                res['date'] = 0
+
+        # article.nlp()
+        # res['summary'] = article.summary
 
     return res
 
